@@ -2,18 +2,13 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
+	"event-scope/backend/internal/router"
 )
 
 func main() {
-	router := gin.Default()
-
-	router.GET("/healthz", func(context *gin.Context) {
-		context.JSON(http.StatusOK, gin.H{"status": "ok"})
-	})
+	engine := router.Setup()
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -21,7 +16,7 @@ func main() {
 	}
 
 	log.Printf("API 啟動於 http://localhost:%s", port)
-	if err := router.Run(":" + port); err != nil {
+	if err := engine.Run(":" + port); err != nil {
 		log.Fatalf("無法啟動 API 伺服器：%v", err)
 	}
 }
