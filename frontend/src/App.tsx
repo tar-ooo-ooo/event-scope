@@ -1,8 +1,14 @@
+import { Button } from 'antd'
+
 function App() {
   return (
     <main>
-      <h1>Event Scope</h1>
-      <p>活動管理與瀏覽平台</p>
+      <Button
+        type="primary"
+        style={{ position: 'fixed', left: 24, top: 24 }}
+      >
+        Start
+      </Button>
     </main>
   )
 }
