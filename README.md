@@ -110,3 +110,34 @@ air
 ```
 
 API 預設監聽 `http://localhost:8080`；可透過 `PORT` 環境變數調整連接埠。健康檢查端點為 `GET /healthz`。
+
+## 本機 Kafka
+
+本機使用 [Redpanda](https://redpanda.com/)（與 Kafka 協定相容，單一容器即可啟動，不需額外設定）。
+
+第一次建立容器（僅需執行一次）：
+
+```bash
+docker run -d --name event-scope-kafka -p 9092:9092 \
+  docker.redpanda.com/redpandadata/redpanda:latest \
+  redpanda start --smp 1 --overprovisioned --node-id 0 \
+  --kafka-addr PLAINTEXT://0.0.0.0:9092 \
+  --advertise-kafka-addr PLAINTEXT://localhost:9092
+```
+
+之後日常開發只需要啟動／停止既有容器：
+
+```bash
+docker start event-scope-kafka
+docker stop event-scope-kafka
+```
+
+建立與查看 Topic（使用 Redpanda 內建的 `rpk` CLI）：
+
+```bash
+docker exec -it event-scope-kafka rpk topic create events
+docker exec -it event-scope-kafka rpk topic create events.dlq
+docker exec -it event-scope-kafka rpk topic list
+```
+
+Broker 位址為 `localhost:9092`。
