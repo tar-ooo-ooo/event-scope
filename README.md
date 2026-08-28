@@ -5,6 +5,7 @@
 ## 技術棧
 
 - Frontend：React + TypeScript
+- 前端工具鏈：Vite + Bun
 - Backend：Go
 - Event Streaming：Apache Kafka
 - 即時更新：Server-Sent Events（SSE）
@@ -62,6 +63,7 @@ event-scope/
 │   │   ├── App.tsx           # 應用程式根元件
 │   │   └── main.tsx          # 前端進入點
 │   ├── package.json
+│   ├── bun.lock
 │   └── tsconfig.json
 ├── backend/                  # Go 後端服務
 │   ├── cmd/
@@ -81,3 +83,18 @@ event-scope/
 ├── README.md
 └── .gitignore
 ```
+
+## 前端開發
+
+前端使用 Bun 管理依賴與執行指令。請先安裝 Bun，再於 `frontend/` 目錄執行：
+
+```bash
+bun install
+bun run dev
+```
+
+常用指令：
+
+- `bun run dev`：啟動本機開發伺服器。
+- `bun run build`：執行型別檢查並建立正式版檔案。
+- `bun run preview`：預覽正式建置結果。
