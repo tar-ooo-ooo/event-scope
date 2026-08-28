@@ -6,7 +6,8 @@
 
 - Frontend：React + TypeScript
 - 前端工具鏈：Vite + Bun
-- Backend：Go
+- Backend：Go + Gin
+- 後端工具鏈：Air
 - Event Streaming：Apache Kafka
 - 即時更新：Server-Sent Events（SSE）
 
@@ -66,6 +67,7 @@ event-scope/
 │   ├── bun.lock
 │   └── tsconfig.json
 ├── backend/                  # Go 後端服務
+│   ├── .air.toml              # Air 熱重載設定
 │   ├── cmd/
 │   │   └── api/              # API 服務進入點
 │   │       └── main.go
@@ -98,3 +100,13 @@ bun run dev
 - `bun run dev`：啟動本機開發伺服器。
 - `bun run build`：執行型別檢查並建立正式版檔案。
 - `bun run preview`：預覽正式建置結果。
+
+## 後端開發
+
+後端使用 Gin 建立 HTTP API，並以 Air 在開發期間自動重新編譯與啟動。請先安裝 Go 與 Air，再於 `backend/` 目錄執行：
+
+```bash
+air
+```
+
+API 預設監聽 `http://localhost:8080`；可透過 `PORT` 環境變數調整連接埠。健康檢查端點為 `GET /healthz`。
