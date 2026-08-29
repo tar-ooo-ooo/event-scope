@@ -14,12 +14,12 @@ function App() {
   useEffect(() => {
     const stream = new EventSource(`${environment.apiBaseUrl}/event/stream`)
 
-    stream.addEventListener('event', (message) => {
+    stream.onmessage = (message) => {
       setEvents((events) => [
-        JSON.parse((message as MessageEvent<string>).data) as SseEvent,
         ...events,
+        JSON.parse(message.data) as SseEvent,
       ])
-    })
+    }
 
     return () => stream.close()
   }, [])
@@ -33,11 +33,31 @@ function App() {
       >
         Start
       </Button>
-      <ul>
+      <div
+        aria-label="Events"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+          left: 120,
+          position: 'fixed',
+          top: 24,
+        }}
+      >
         {events.map((event) => (
-          <li key={event.event_id}>{event.event_id}</li>
+          <div
+            key={event.event_id}
+            style={{
+              border: '1px solid #1677ff',
+              borderRadius: 6,
+              fontFamily: 'monospace',
+              padding: '8px 12px',
+            }}
+          >
+            {event.event_id}
+          </div>
         ))}
-      </ul>
+      </div>
     </main>
   )
 }
