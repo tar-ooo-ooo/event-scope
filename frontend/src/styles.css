@@ -77,6 +77,11 @@ main {
   background: #17251a;
 }
 
+.event-card--failed {
+  border-left-color: #e35d5d;
+  background: #321b1b;
+}
+
 .event-card code {
   overflow-wrap: anywhere;
   color: #eef8ee;

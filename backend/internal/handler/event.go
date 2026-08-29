@@ -3,6 +3,7 @@ package handler
 import (
 	"event-scope/backend/internal/model"
 	"event-scope/backend/internal/sse"
+	"math/rand"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +17,13 @@ func CreateEventHandler(b *sse.Broker) gin.HandlerFunc {
 			return
 		}
 
-		b.Publish(req)
+		success := rand.Intn(100) < 75
+
+		result := model.EventResult{
+			EventId: req.EventId,
+			Success: success,
+		}
+		b.Publish(result)
 
 		Res(c, 200, "Event created and published", nil)
 	}

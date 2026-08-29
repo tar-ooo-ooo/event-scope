@@ -6,6 +6,7 @@ import { createEvent } from './services/eventService'
 
 type SseEvent = {
   event_id: string
+  success: boolean
 }
 
 function App() {
@@ -47,7 +48,14 @@ function App() {
             <div className="event-log" aria-label="Events" aria-live="polite">
               {events.length === 0 && <p>waiting for events...</p>}
               {events.map((event) => (
-                <div className="event-card" key={event.event_id}>
+                <div
+                  className={
+                    event.success === false
+                      ? 'event-card event-card--failed'
+                      : 'event-card'
+                  }
+                  key={event.event_id}
+                >
                   <code>{event.event_id}</code>
                 </div>
               ))}
