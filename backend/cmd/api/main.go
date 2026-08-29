@@ -13,10 +13,10 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 
 	cfg := config.Load()
-	engine := router.Setup()
+	engine := router.Setup(cfg)
 
-	log.Printf("API 啟動於 http://localhost:%s", cfg.Port)
+	log.Printf("🚀 API 啟動於 http://localhost:%s", cfg.Port)
 	if err := engine.Run(":" + cfg.Port); err != nil {
-		log.Fatalf("無法啟動 API 伺服器：%v", err)
+		log.Fatalf("🫠 無法啟動 API 伺服器：%v", err)
 	}
 }
