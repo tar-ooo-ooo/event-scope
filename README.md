@@ -113,26 +113,19 @@ API 預設監聽 `http://localhost:8080`；可透過 `PORT` 環境變數調整�
 
 ## 本機 Kafka
 
-本機使用 [Redpanda](https://redpanda.com/)（與 Kafka 協定相容，單一容器即可啟動，不需額外設定）。
-
-第一次建立容器（僅需執行一次）：
+本機使用 [Redpanda](https://redpanda.com/)（與 Kafka 協定相容）。在另一個 terminal 前景啟動 broker：
 
 ```bash
-docker run -d --name event-scope-kafka -p 9092:9092 \
+docker run --rm --name event-scope-kafka -p 9092:9092 \
   docker.redpanda.com/redpandadata/redpanda:latest \
   redpanda start --smp 1 --overprovisioned --node-id 0 \
   --kafka-addr PLAINTEXT://0.0.0.0:9092 \
   --advertise-kafka-addr PLAINTEXT://localhost:9092
 ```
 
-之後日常開發只需要啟動／停止既有容器：
+停止時在該 terminal 按 `Ctrl+C`；容器會自動移除。
 
-```bash
-docker start event-scope-kafka
-docker stop event-scope-kafka
-```
-
-建立與查看 Topic（使用 Redpanda 內建的 `rpk` CLI）：
+建立與查看 Topic（在另一個 terminal 執行）：
 
 ```bash
 docker exec -it event-scope-kafka rpk topic create events
