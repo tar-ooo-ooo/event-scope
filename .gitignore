@@ -1,3 +1,5 @@
 node_modules/
 dist/
 backend/tmp/
+.codebase-memory/
+.vscode/
