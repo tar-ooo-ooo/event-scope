@@ -17,5 +17,5 @@ func CreateEventHandler(context *gin.Context) {
 
 	// 發佈到 Kafka
 
-	context.JSON(http.StatusAccepted, gin.H{"event_id": req.EventId})
+	Res(context, http.StatusAccepted, gin.H{"event_id": req.EventId}, nil)
 }
