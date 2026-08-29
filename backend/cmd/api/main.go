@@ -5,9 +5,13 @@ import (
 
 	"event-scope/backend/internal/config"
 	"event-scope/backend/internal/router"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	gin.SetMode(gin.ReleaseMode)
+
 	cfg := config.Load()
 	engine := router.Setup()
 
