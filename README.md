@@ -113,7 +113,21 @@ API 預設監聽 `http://localhost:8080`；可透過 `PORT` 環境變數調整�
 
 ## 本機 Kafka
 
-本機使用 [Redpanda](https://redpanda.com/)（與 Kafka 協定相容）。在另一個 terminal 前景啟動 broker：
+本機使用 [Redpanda](https://redpanda.com/)（與 Kafka 協定相容），並以不含 GUI 的 [Colima](https://colima.run/) 執行 Docker。
+
+首次安裝：
+
+```bash
+brew install colima docker
+```
+
+每次重新開機後，先啟動 Docker daemon：
+
+```bash
+colima start
+```
+
+然後在另一個 terminal 前景啟動 broker：
 
 ```bash
 docker run --rm --name event-scope-kafka -p 9092:9092 \
