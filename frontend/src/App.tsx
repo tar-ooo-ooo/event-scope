@@ -26,38 +26,37 @@ function App() {
 
   return (
     <main>
-      <Button
-        type="primary"
-        style={{ position: 'fixed', left: 24, top: 24 }}
-        onClick={createEvent}
-      >
-        Start
-      </Button>
-      <div
-        aria-label="Events"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-          left: 120,
-          position: 'fixed',
-          top: 24,
-        }}
-      >
-        {events.map((event) => (
-          <div
-            key={event.event_id}
-            style={{
-              border: '1px solid #1677ff',
-              borderRadius: 6,
-              fontFamily: 'monospace',
-              padding: '8px 12px',
-            }}
-          >
-            {event.event_id}
-          </div>
-        ))}
-      </div>
+      <section className="terminal">
+        <div className="terminal-body">
+          <section className="panel">
+            <div className="command-line">
+              <span>$</span>
+              <Button
+                className="terminal-start"
+                onClick={() =>
+                  void Promise.all(
+                    Array.from({ length: 20 }, () => createEvent()),
+                  )
+                }
+              >
+                Start
+              </Button>
+            </div>
+          </section>
+          <section className="panel">
+            <div className="event-log" aria-label="Events" aria-live="polite">
+              {events.length === 0 && <p>waiting for events...</p>}
+              {events.map((event) => (
+                <div className="event-card" key={event.event_id}>
+                  <code>{event.event_id}</code>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section className="panel" />
+          <section className="panel" />
+        </div>
+      </section>
     </main>
   )
 }
