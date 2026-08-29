@@ -42,6 +42,7 @@ main {
   align-items: center;
   gap: 10px;
   color: #8be28b;
+  font-size: 1rem;
 }
 
 .terminal-input {
@@ -49,9 +50,12 @@ main {
   min-width: 0;
   border: 0;
   outline: 0;
+  padding: 0;
   color: #d8ffd8;
   background: transparent;
   font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }
 
 .terminal-input::placeholder {
@@ -61,8 +65,8 @@ main {
 .command-output {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 16px;
+  gap: 0;
+  margin: 0;
   color: #c7ced0;
 }
 
