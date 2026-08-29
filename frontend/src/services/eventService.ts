@@ -6,7 +6,6 @@ export function createEvent() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       event_id: crypto.randomUUID(),
-      type: 'manual.start',
     }),
   })
 }

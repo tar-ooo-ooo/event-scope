@@ -6,7 +6,6 @@ import { createEvent } from './services/eventService'
 
 type SseEvent = {
   event_id: string
-  type: string
 }
 
 function App() {
@@ -36,9 +35,7 @@ function App() {
       </Button>
       <ul>
         {events.map((event) => (
-          <li key={event.event_id}>
-            {event.type}: {event.event_id}
-          </li>
+          <li key={event.event_id}>{event.event_id}</li>
         ))}
       </ul>
     </main>
