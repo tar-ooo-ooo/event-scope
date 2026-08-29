@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import { Button } from 'antd'
+import { type FormEvent, useEffect, useState } from 'react'
 
 import { environment } from './config/environment'
 import { createEvent } from './services/eventService'
@@ -10,6 +9,8 @@ type SseEvent = {
 }
 
 function App() {
+  const [command, setCommand] = useState('')
+  const [commandOutput, setCommandOutput] = useState<string[]>([])
   const [events, setEvents] = useState<SseEvent[]>([])
 
   useEffect(() => {
@@ -25,24 +26,42 @@ function App() {
     return () => stream.close()
   }, [])
 
+  function runCommand(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const value = command.trim()
+    if (!value) return
+
+    if (value === 'start') {
+      void Promise.all(Array.from({ length: 20 }, () => createEvent()))
+      setCommandOutput((output) => [...output, 'started 20 events'])
+    } else {
+      setCommandOutput((output) => [...output, `${value}: command not found`])
+    }
+
+    setCommand('')
+  }
+
   return (
     <main>
       <section className="terminal">
         <div className="terminal-body">
           <section className="panel">
-            <div className="command-line">
-              <span>$</span>
-              <Button
-                className="terminal-start"
-                onClick={() =>
-                  void Promise.all(
-                    Array.from({ length: 20 }, () => createEvent()),
-                  )
-                }
-              >
-                Start
-              </Button>
+            <div className="command-output">
+              {commandOutput.map((output, index) => (
+                <p key={`${output}-${index}`}>{output}</p>
+              ))}
             </div>
+            <form className="command-line" onSubmit={runCommand}>
+              <span>$</span>
+              <input
+                autoFocus
+                className="terminal-input"
+                onChange={(event) => setCommand(event.target.value)}
+                placeholder="type start"
+                value={command}
+              />
+            </form>
           </section>
           <section className="panel">
             <div className="event-log" aria-label="Events" aria-live="polite">

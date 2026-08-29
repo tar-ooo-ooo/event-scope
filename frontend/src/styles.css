@@ -44,17 +44,30 @@ main {
   color: #8be28b;
 }
 
-.terminal-start.ant-btn {
-  border-color: #4cae4c;
-  color: #b8ffb8;
-  background: #1c3620;
+.terminal-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  color: #d8ffd8;
+  background: transparent;
   font-family: inherit;
 }
 
-.terminal-start.ant-btn:hover {
-  border-color: #85f085;
-  color: #d8ffd8;
-  background: #28512e;
+.terminal-input::placeholder {
+  color: #66756a;
+}
+
+.command-output {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+  color: #c7ced0;
+}
+
+.command-output p {
+  margin: 0;
 }
 
 .event-log {
