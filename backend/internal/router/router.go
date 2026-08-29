@@ -2,6 +2,7 @@ package router
 
 import (
 	"event-scope/backend/internal/handler"
+	"event-scope/backend/internal/sse"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +15,10 @@ func Setup() *gin.Engine {
 		handler.Res(context, http.StatusOK, "API is healthy", nil)
 	})
 
-	eventRoutes(router.Group("/event"))
+	// 建立 SSE Broker
+	broker := sse.NewBroker()
+
+	eventRoutes(router.Group("/event"), broker)
 
 	return router
 }
