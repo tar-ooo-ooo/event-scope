@@ -32,9 +32,14 @@ function App() {
     const value = command.trim()
     if (!value) return
 
-    if (value === 'start') {
-      void Promise.all(Array.from({ length: 20 }, () => createEvent()))
-      setCommandOutput((output) => [...output, 'started 20 events'])
+    const [name, countText] = value.split(/\s+/)
+    const count = Number(countText)
+
+    if (name === 'start' && !countText) {
+      setCommandOutput((output) => [...output, 'start: missing event count'])
+    } else if (name === 'start' && Number.isInteger(count) && count > 0) {
+      void Promise.all(Array.from({ length: count }, () => createEvent()))
+      setCommandOutput((output) => [...output, `started ${count} events`])
     } else {
       setCommandOutput((output) => [...output, `${value}: command not found`])
     }
@@ -58,7 +63,7 @@ function App() {
                 autoFocus
                 className="terminal-input"
                 onChange={(event) => setCommand(event.target.value)}
-                placeholder="type start"
+                placeholder="type start <count>"
                 value={command}
               />
             </form>
