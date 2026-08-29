@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useState } from 'react'
+import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from 'react'
 
 import { environment } from './config/environment'
 import { createEvent } from './services/eventService'
@@ -9,7 +9,10 @@ type SseEvent = {
 }
 
 function App() {
+  const commandInputRef = useRef<HTMLInputElement>(null)
   const [command, setCommand] = useState('')
+  const [commandHistory, setCommandHistory] = useState<string[]>([])
+  const [historyIndex, setHistoryIndex] = useState<number | null>(null)
   const [commandOutput, setCommandOutput] = useState<string[]>([])
   const [events, setEvents] = useState<SseEvent[]>([])
 
@@ -32,6 +35,9 @@ function App() {
     const value = command.trim()
     if (!value) return
 
+    setCommandHistory((history) => [...history, value])
+    setHistoryIndex(null)
+
     const [name, countText] = value.split(/\s+/)
     const count = Number(countText)
 
@@ -47,11 +53,39 @@ function App() {
     setCommand('')
   }
 
+  function browseHistory(event: KeyboardEvent<HTMLInputElement>) {
+    if (commandHistory.length === 0 || !['ArrowUp', 'ArrowDown'].includes(event.key)) return
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      const nextIndex = historyIndex === null
+        ? commandHistory.length - 1
+        : Math.max(0, historyIndex - 1)
+
+      setHistoryIndex(nextIndex)
+      setCommand(commandHistory[nextIndex])
+      return
+    }
+
+    if (historyIndex === null) return
+
+    event.preventDefault()
+    const nextIndex = historyIndex + 1
+    if (nextIndex === commandHistory.length) {
+      setHistoryIndex(null)
+      setCommand('')
+      return
+    }
+
+    setHistoryIndex(nextIndex)
+    setCommand(commandHistory[nextIndex])
+  }
+
   return (
     <main>
       <section className="terminal">
         <div className="terminal-body">
-          <section className="panel">
+          <section className="panel" onClick={() => commandInputRef.current?.focus()}>
             <div className="command-output">
               {commandOutput.map((output, index) => (
                 <p key={`${output}-${index}`}>{output}</p>
@@ -62,7 +96,12 @@ function App() {
               <input
                 autoFocus
                 className="terminal-input"
-                onChange={(event) => setCommand(event.target.value)}
+                ref={commandInputRef}
+                onChange={(event) => {
+                  setCommand(event.target.value)
+                  setHistoryIndex(null)
+                }}
+                onKeyDown={browseHistory}
                 placeholder="type start <count>"
                 value={command}
               />
