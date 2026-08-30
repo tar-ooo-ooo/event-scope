@@ -10,19 +10,19 @@ import (
 
 func Cors(cfg config.Config) gin.HandlerFunc {
 
-	return func(c *gin.Context) {
-		if c.GetHeader("Origin") == cfg.FrontendEndpoint {
-			c.Header("Access-Control-Allow-Origin", cfg.FrontendEndpoint)
-			c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-			c.Header("Access-Control-Allow-Headers", "Content-Type")
+	return func(ctx *gin.Context) {
+		if ctx.GetHeader("Origin") == cfg.FrontendEndpoint {
+			ctx.Header("Access-Control-Allow-Origin", cfg.FrontendEndpoint)
+			ctx.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+			ctx.Header("Access-Control-Allow-Headers", "Content-Type")
 
-			if c.Request.Method == http.MethodOptions {
-				c.Status(http.StatusNoContent)
-				c.Abort()
+			if ctx.Request.Method == http.MethodOptions {
+				ctx.Status(http.StatusNoContent)
+				ctx.Abort()
 				return
 			}
 		}
 
-		c.Next()
+		ctx.Next()
 	}
 }

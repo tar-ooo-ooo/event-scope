@@ -9,9 +9,10 @@ import (
 	"event-scope/backend/internal/sse"
 
 	"github.com/gin-gonic/gin"
+	kafkago "github.com/segmentio/kafka-go"
 )
 
-func Setup(cfg config.Config) *gin.Engine {
+func Setup(cfg config.Config, wr *kafkago.Writer) *gin.Engine {
 	router := gin.New()
 	router.Use(
 		middleware.RequestLogger(),
@@ -19,14 +20,14 @@ func Setup(cfg config.Config) *gin.Engine {
 		middleware.Cors(cfg),
 	)
 
-	router.GET("/healthz", func(context *gin.Context) {
-		handler.Res(context, http.StatusOK, "API is healthy", nil)
+	router.GET("/healthz", func(ctx *gin.Context) {
+		handler.Res(ctx, http.StatusOK, "API is healthy", nil)
 	})
 
 	// 建立 SSE Broker
-	broker := sse.NewBroker()
+	sseBroker := sse.NewBroker()
 
-	eventRoutes(router.Group("/event"), broker)
+	eventRoutes(router.Group("/event"), sseBroker, wr)
 
 	return router
 }
