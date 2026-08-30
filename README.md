@@ -142,8 +142,10 @@ docker run --rm --name event-scope-kafka -p 9092:9092 \
 建立與查看 Topic（在另一個 terminal 執行）：
 
 ```bash
-docker exec -it event-scope-kafka rpk topic create events
-docker exec -it event-scope-kafka rpk topic create events.dlq
+docker exec -it event-scope-kafka rpk topic create payment.requested
+docker exec -it event-scope-kafka rpk topic create payment.succeeded
+docker exec -it event-scope-kafka rpk topic create payment.dlq
+docker exec -it event-scope-kafka rpk topic create notification.dlq
 docker exec -it event-scope-kafka rpk topic list
 ```
 

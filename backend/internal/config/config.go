@@ -20,7 +20,20 @@ func Load() Config {
 		Port: "8080",
 		Kafka: Kafka{
 			Broker: "localhost:9092",
-			Topics: []Topic{{Name: "events"}, {Name: "events.dlq"}},
+			Topics: []Topic{
+				{
+					Name: "payment.requested",
+				},
+				{
+					Name: "payment.succeeded",
+				},
+				{
+					Name: "payment.dlq",
+				},
+				{
+					Name: "notification.dlq",
+				},
+			},
 		},
 		FrontendEndpoint: "http://localhost:5173",
 	}
