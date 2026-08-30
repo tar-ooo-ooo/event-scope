@@ -21,18 +21,10 @@ func Load() Config {
 		Kafka: Kafka{
 			Broker: "localhost:9092",
 			Topics: []Topic{
-				{
-					Name: "payment.requested",
-				},
-				{
-					Name: "payment.succeeded",
-				},
-				{
-					Name: "payment.dlq",
-				},
-				{
-					Name: "notification.dlq",
-				},
+				{Name: "payment.requested"},
+				{Name: "payment.succeeded"},
+				{Name: "payment.dlq"},
+				{Name: "notification.dlq"},
 			},
 		},
 		FrontendEndpoint: "http://localhost:5173",
