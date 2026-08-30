@@ -11,35 +11,40 @@
 - Event Streaming：Apache Kafka
 - 即時更新：Server-Sent Events（SSE）
 
-## 事件處理架構
+## 付款事件處理架構
 
-本專案預計以 Kafka 處理非同步事件，確保事件在暫時性失敗或重複投遞時，仍能可靠且可追蹤地處理。
+`POST /event` 只負責將付款請求可靠寫入 Kafka，不直接執行付款或推播。背景 worker 主動從 Kafka 拉取事件，讓大量請求可先保存、再依 worker 處理能力執行。
 
 ```text
 React 前端
     ▲
-    │ SSE：即時事件結果
+    │ SSE：accepted／付款／推播結果
     │
 Go API / SSE Server
     │
-    ├── 發布事件 ──► Kafka Topic ──► Consumer
-    │                                  │
-    │                                  ├── Idempotency：以事件 ID 去重，避免重複副作用
-    │                                  ├── Retry：暫時性錯誤依策略重試
-    │                                  └── 成功 ──► SSE 推送結果至前端渲染
-    │
-    └── 重試耗盡或不可恢復錯誤 ──► DLQ Topic
-                                         │
-                                         └── 管理端 API／DLQ Consumer 重放至 Retry 或 Main Topic
+    └── payment.requested ──► Kafka
+                                  │
+                                  ▼
+                    payment-worker consumer group
+                    ├── 模擬付款（95% 成功）
+                    ├── 暫時性失敗：有限次 retry
+                    ├── 重試耗盡：payment.dlq
+                    └── 成功：payment.succeeded
+                                      │
+                                      ▼
+                 notification-worker consumer group
+                 ├── 模擬推播（95% 成功）
+                 ├── 失敗：notification.dlq
+                 └── 成功：SSE 推送前端
 ```
 
 ### 處理原則
 
-- **Kafka**：解耦 API 與非同步工作者，並提供可擴充的事件傳遞機制。
-- **Idempotency**：所有事件帶有唯一 `event_id`；Consumer 在執行副作用前檢查並記錄處理結果，避免同一事件重複執行。
-- **Retry**：可重試的暫時性錯誤採有限次數與退避策略重試。
-- **DLQ**：重試耗盡或不可恢復的事件寫入 Kafka 的 Dead Letter Queue Topic，避免阻塞主要事件流。DLQ 事件由管理端 API 或專用 Consumer 重放至 Retry Topic 或原始 Main Topic；不直接自動重呼原始 API，以避免重複驗證或副作用。
-- **SSE**：後端將事件處理狀態與結果推送給 React 前端，讓介面可即時渲染進度、成功或失敗狀態。
+- **Producer**：API 成功寫入 `payment.requested` 後才回覆 `202 Accepted` 與 SSE `accepted`。
+- **Consumer group**：worker 主動拉取 Kafka 訊息；同一 group 中每筆訊息只會由一個 worker 處理。增加 worker 與 partition 後可平行處理。
+- **付款優先於推播**：notification worker 只讀取 `payment.succeeded`，付款失敗不會推播。
+- **Retry 與 DLQ**：付款重試耗盡寫入 `payment.dlq`；推播失敗寫入 `notification.dlq`。兩者可獨立監控與重放。
+- **Idempotency**：所有事件帶有唯一 `event_id`；正式接入真實金流前，consumer 必須以它避免重複副作用。
 
 ### DLQ 事件內容
 
