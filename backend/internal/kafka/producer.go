@@ -13,6 +13,7 @@ func NewWriter(b string, t string) *kafkago.Writer {
 		Addr:         kafkago.TCP(b),
 		Topic:        t,
 		RequiredAcks: kafkago.RequireAll, // Kafka 會把訊息儲存到磁碟的 topic 裡，等到所有 partition 的 replica 都收到訊息後，才會回覆給 client，確保訊息不會遺失
+		// BatchSize: 100, // 批次寫入訊息的大小，預設是 100，若要即時寫入訊息，可以設定為 1
 	}
 }
 

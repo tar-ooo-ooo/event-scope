@@ -20,7 +20,7 @@ func NewBroker() *Broker {
 }
 
 func (b *Broker) Subscribe() chan model.EventResult {
-	client := make(chan model.EventResult, 1)
+	client := make(chan model.EventResult, 10_000) // 最多 10,000 個事件，避免阻塞
 
 	b.mu.Lock()                    // 加鎖，避免多個 client 同時修改 clients map
 	b.clients[client] = struct{}{} // 將新的 client channel 加入 clients map
